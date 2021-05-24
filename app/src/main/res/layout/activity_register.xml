@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegisterActivity"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Register"
+            android:textSize="40sp"
+            android:id="@+id/tvtitle"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvtitle"
+            android:layout_marginTop="15dp"
+            android:id="@+id/txtname"
+            android:hint="Name"
+            android:padding="5dp"
+            android:background="@drawable/edit_text_design"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtname"
+            android:layout_marginTop="15dp"
+            android:id="@+id/txtemail"
+            android:hint="Email"
+            android:padding="5dp"
+            android:background="@drawable/edit_text_design"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtemail"
+            android:layout_marginTop="15dp"
+            android:id="@+id/txtphone"
+            android:hint="Phone"
+            android:padding="5dp"
+            android:background="@drawable/edit_text_design"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtphone"
+            android:layout_marginTop="15dp"
+            android:id="@+id/txtpass"
+            android:hint="Password"
+            android:padding="5dp"
+            android:background="@drawable/edit_text_design"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnregister"
+            android:text="Register"
+            android:layout_marginTop="15dp"
+            android:layout_below="@id/txtpass"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Member? Login"
+            android:layout_marginTop="15dp"
+            android:id="@+id/tvregister"
+            android:layout_below="@id/btnregister"
+            android:gravity="center"/>
+
+</LinearLayout>
