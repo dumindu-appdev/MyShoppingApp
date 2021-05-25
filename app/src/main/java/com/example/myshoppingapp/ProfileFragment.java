@@ -80,7 +80,7 @@ public class ProfileFragment extends Fragment {
         btnorders.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                getFragmentManager().beginTransaction().add(R.id.frag_container,new OrderHistoryFragment()).commit();
             }
         });
 
