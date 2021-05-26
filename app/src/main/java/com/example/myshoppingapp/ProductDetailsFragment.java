@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -36,13 +38,30 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
+import java.util.Properties;
+
 public class ProductDetailsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
-    private TextView txtname,txtcate,txtscat,txtprice,txtdesc,txtavail;
+    private TextView txtname,txtcate,txtscat,txtprice,txtdesc,txtavail,txtshare;
     private ImageView prod_image;
     private Spinner sp_size;
-    private EditText txtqty;
-    private Button btnadd;
+    private EditText txtqty,txtemail;
+    private Button btnadd,btnsend;
     private String pid;
     private ProgressDialog pd;
     private DatabaseReference dbRef;
@@ -51,6 +70,7 @@ public class ProductDetailsFragment extends Fragment implements AdapterView.OnIt
     private ArrayAdapter<String> adapter;
     private FirebaseAuth auth;
     private String imageUri="";
+    private LinearLayout emailLayout;
 
     public ProductDetailsFragment(String pid) {
         // Required empty public constructor
@@ -72,7 +92,11 @@ public class ProductDetailsFragment extends Fragment implements AdapterView.OnIt
         prod_image = view.findViewById(R.id.prod_details_image);
         sp_size = view.findViewById(R.id.prod_details_sp_size);
         txtqty = view.findViewById(R.id.prod_details_qty); //--
+        txtshare = view.findViewById(R.id.prod_details_share);
+        txtemail = view.findViewById(R.id.prod_details_email);
         btnadd = view.findViewById(R.id.prod_details_btn_add);
+        btnsend = view.findViewById(R.id.prod_details_btn_send);
+        emailLayout = view.findViewById(R.id.prod_details_laytout_email);
         pd = new ProgressDialog(getContext());
         dbRef = FirebaseDatabase.getInstance().getReference();
         list_size = new ArrayList<String>();
@@ -95,7 +119,73 @@ public class ProductDetailsFragment extends Fragment implements AdapterView.OnIt
                 saveToCart();
             }
         });
+
+        txtshare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (emailLayout.getVisibility()==View.VISIBLE){
+                    emailLayout.setVisibility(View.GONE);
+                }
+                else{
+                    emailLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        btnsend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = txtemail.getText().toString();
+                sendEmail(email);
+            }
+        });
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         return view;
+    }
+
+    private void sendEmail(String email) {
+        pd.setMessage("Sending...");
+        pd.show();
+        final String user = ""; //senders email address
+        final String pass = ""; //senders email account password
+        Properties prop = new Properties();
+        prop.put("mail.smtp.auth","true");
+        prop.put("mail.smtp.starttls.enable","true");
+        prop.put("mail.smtp.host","smtp.gmail.com");
+        prop.put("mail.smtp.port","587");
+
+        Session session = Session.getInstance(prop,
+                new javax.mail.Authenticator(){
+                    @Override
+                   protected PasswordAuthentication getPasswordAuthentication(){
+                       return new PasswordAuthentication(user,pass);
+                   }
+        });
+
+        try {
+            Message msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress(user));
+            msg.setRecipients(Message.RecipientType.TO,InternetAddress.parse(email));
+            msg.setSubject("Online Foods : "+txtname.getText().toString());
+            Multipart multipart = new MimeMultipart("related");
+            BodyPart bodyPart = new MimeBodyPart();
+            String htmlText = "Hello,<br/>Following message has been shared by "+auth.getCurrentUser().getEmail();
+            htmlText +="<p><b>Name: </b>"+txtname.getText().toString()+"</p>";
+            htmlText +="<p><b>Price: Rs. </b>"+String.format("%.02f",Float.parseFloat(txtprice.getText().toString()))+"</p>";
+            htmlText +="<img src='"+imageUri+"'/>";
+            htmlText +="<p>Thank you,<br />Team - Online Foods</p>";
+            bodyPart.setContent(htmlText,"text/html");
+            multipart.addBodyPart(bodyPart);
+            msg.setContent(multipart);
+            Transport.send(msg);
+            Toast.makeText(getContext(), "Sent", Toast.LENGTH_SHORT).show();
+            pd.dismiss();
+        }
+        catch (MessagingException e){
+            throw new RuntimeException(e);
+        }
     }
 
     private void saveToCart() {

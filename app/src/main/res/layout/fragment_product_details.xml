@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ProductDetailsFragment"
-    android:background="@color/cardview_light_background">
+    android:background="@color/cardview_light_background"
+    android:layout_marginBottom="55dp">
 
     <!-- TODO: Update blank fragment layout -->
     <LinearLayout
@@ -116,6 +117,38 @@
             android:layout_margin="20dp"
             android:text="Add to Cart"
             android:id="@+id/prod_details_btn_add"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tell a Friend"
+            android:layout_margin="10dp"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:id="@+id/prod_details_share"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="10dp"
+            android:id="@+id/prod_details_laytout_email"
+            android:visibility="gone">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:hint="Email address"
+                android:id="@+id/prod_details_email"
+                android:layout_weight="1"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Send"
+                android:id="@+id/prod_details_btn_send"
+                android:layout_weight="2"/>
+        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>
